@@ -7,6 +7,8 @@ import { getBuyers, createBuyer, updateBuyer, deleteBuyer, setBuyerPassword } fr
 import { adminListOrders, adminUpdateOrderStatus } from '../../api/adminOrders.js'
 import { createPaymentIntent } from '../../api/payments.js'
 import PromptPayModal from '../payments/PromptPayModal.jsx'
+import { logout as doLogout } from '../../api/auth.js'
+
 
 const currency = (n)=> new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB'}).format(n||0)
 
@@ -29,6 +31,8 @@ function reducer(s, a){
 
 function TopBar({ user, openCart, onAuth }){
   const nav = useNavigate()
+  const isBuyer = user?.role === 'buyer'
+  const isAdmin = user?.role === 'admin'
   return (
     <div className="header">
       <div className="container" style={{display:'flex',alignItems:'center',gap:8}}>
@@ -36,17 +40,33 @@ function TopBar({ user, openCart, onAuth }){
         <b>ผักหน้าบ้าน</b>
         <div className="nav" style={{marginLeft:16}}>
           <Link to="/" className="active">หน้าหลัก</Link>
-          <Link to="/profile">โปรไฟล์/คำสั่งซื้อ</Link>
-          <Link to="/admin/products">แผงแอดมิน</Link>
+          {isBuyer && <Link to="/delivery">ข้อมูลจัดส่ง</Link>}
         </div>
         <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}>
-          {user? <span style={{fontSize:14}}>สวัสดี, {user.name}</span> : <button className="btn primary" onClick={()=>onAuth('login')}>สมัคร/เข้าสู่ระบบ</button>}
+          {user ? (
+            <>
+              <span style={{fontSize:14}}>สวัสดี, {user.name}</span>
+              <button
+                className="btn"
+                onClick={()=>{
+                  console.log('[FE] logout click from TopBar')
+                  doLogout()
+                  location.reload()
+                }}
+              >
+                ออกจากระบบ
+              </button>
+            </>
+          ) : (
+            <button className="btn primary" onClick={()=>onAuth('login')}>สมัคร/เข้าสู่ระบบ</button>
+          )}
           <button className="btn" onClick={openCart}>🧺</button>
         </div>
       </div>
     </div>
   )
 }
+
 
 export default function VeggieShopMVP({ onOpenAuth, initialTab='home' }){
   const [s, d] = useReducer(reducer, initial)

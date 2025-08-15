@@ -8,6 +8,8 @@ import AdminLayout from './features/admin/AdminLayout.jsx'
 import AdminProducts from './features/admin/AdminProducts.jsx'
 import AdminOrders from './features/admin/AdminOrders.jsx'
 import AdminBuyers from './features/admin/AdminBuyers.jsx'
+import DeliveryInfo from './features/account/DeliveryInfo.jsx'
+
 
 function AuthModal({ show, setShow, tab, setTab, onSuccess }) {
   if (!show) return null
@@ -29,11 +31,13 @@ function AuthModal({ show, setShow, tab, setTab, onSuccess }) {
   )
 }
 
-function ProtectedAdmin({ children }) {
+// Guard ผู้ซื้อเท่านั้น
+
+function ProtectedBuyer({ children }) {
   const me = getCurrentUser()
   const loc = useLocation()
-  if (!me) return <Navigate to="/" state={{ from: loc }} replace />
-  if (me.role !== 'admin') return <Navigate to="/" replace />
+  if (!me) { console.log('[Guard] buyer: no user'); return <Navigate to="/" state={{ from: loc }} replace /> }
+  if (me.role !== 'buyer') { console.log('[Guard] buyer: forbidden role =', me.role); return <Navigate to="/" replace /> }
   return children
 }
 
@@ -42,6 +46,20 @@ export default function App() {
   const [tab, setTab] = useState('login')
   const [me, setMe] = useState(null)
 
+  function ProtectedAdmin({ children }) {
+  const me = getCurrentUser()
+  const loc = useLocation()
+  if (!me) {
+    console.log('[Guard] ProtectedAdmin: no user, redirect to /')
+    return <Navigate to="/" state={{ from: loc }} replace />
+  }
+  if (me.role !== 'admin') {
+    console.log('[Guard] ProtectedAdmin: forbidden role =', me.role)
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
   useEffect(() => {
     const m = getCurrentUser()
     if (m) setMe(m)
@@ -49,10 +67,15 @@ export default function App() {
   }, [])
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <BrowserRouter><Routes><Route path="/delivery" element={ <ProtectedBuyer><DeliveryInfo /></ProtectedBuyer>}/>  
         <Route path="/" element={<VeggieShopMVP onOpenAuth={(mode='login')=>{ setTab(mode); setShowAuth(true) }} />} />
-        <Route path="/profile" element={<VeggieShopMVP initialTab="profile" onOpenAuth={(mode='login')=>{ setTab(mode); setShowAuth(true) }} />} />
+        <Route path="/profile" element={<ProtectedAdmin> 
+                                          <VeggieShopMVP 
+                                          initialTab="profile" 
+                                          onOpenAuth={(mode='login')=>{ setTab(mode); setShowAuth(true) }}/>
+                                        </ProtectedAdmin>
+                                      }
+                                    />
         <Route path="/admin" element={<ProtectedAdmin><AdminLayout /></ProtectedAdmin>}>
           <Route index element={<Navigate to="products" replace />} />
           <Route path="products" element={<AdminProducts />} />
