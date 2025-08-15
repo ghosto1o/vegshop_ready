@@ -146,29 +146,17 @@ export default function VeggieShopMVP({ onOpenAuth }){
 
       {/* Grid สินค้า */}
       <div className="container" style={{marginTop:12}}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(230px,1fr))',gap:14}}>
+        <div className="product-grid">
           {s.products.map(p=> (
-            <div
-              key={p.id}
-              className="card"
-              style={{
-                border:'1.5px solid #e5e7eb',
-                borderRadius:16,
-                overflow:'hidden',
-                transition:'transform .12s ease, box-shadow .12s ease',
-                boxShadow:'0 4px 16px rgba(0,0,0,.04)'
-              }}
-              onMouseEnter={(e)=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 24px rgba(0,0,0,.08)' }}
-              onMouseLeave={(e)=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 16px rgba(0,0,0,.04)' }}
-            >
-              <div style={{background:'#f0fdf4', display:'grid', placeItems:'center', height:120, fontSize:48}}>{p.images?.[0]||'🥬'}</div>
-              <div style={{padding:12}}>
-                <div style={{display:'flex', alignItems:'center', gap:8}}>
+            <div key={p.id} className="card product-card">
+              <div className="product-image">{p.images?.[0]||'🥬'}</div>
+              <div className="product-info">
+                <div className="product-title-row">
                   <b style={{fontSize:16}}>{p.name}</b>
-                  <span className="badge" style={{background:'#e2f5ea', color:'#166534', border:'1px solid #bbf7d0'}}>{p.category}</span>
+                  <span className="badge">{p.category}</span>
                 </div>
-                <div style={{color:'#555',fontSize:13, marginTop:4}}>{p.description}</div>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:10}}>
+                <div className="product-description">{p.description}</div>
+                <div className="product-bottom-row">
                   <div><b style={{fontSize:16}}>{currency(p.price)}</b> <span style={{fontSize:12,color:'#666'}}>/ {p.unit}</span></div>
                   <button
                     className="btn"
