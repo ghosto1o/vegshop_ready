@@ -17,15 +17,15 @@ import authMw from './middleware/auth.js'
 import payments from './routes/payments.js'
 
 const app = express()
-app.use(helmet({ crossOriginResourcePolicy:{ policy:'cross-origin' } }))
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 const allowed = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',')
-app.use(cors({ origin: allowed, credentials:true }))
-app.use(express.json({ limit:'1mb' }))
-app.use(express.urlencoded({ extended:true }))
+app.use(cors({ origin: allowed, credentials: true }))
+app.use(express.json({ limit: '1mb' }))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(mongoSanitize())
 
-app.get('/', (_req,res)=> res.json({ name:'vegshop-api' }))
+app.get('/', (_req, res) => res.json({ name: 'vegshop-api' }))
 app.use('/health', health)
 app.use('/auth', authRoutes)
 app.use('/products', productRoutes)
@@ -36,6 +36,12 @@ app.use('/account', account)
 app.use('/payments', payments)
 
 const PORT = process.env.PORT || 4000
-mongoose.connect(process.env.MONGO_URI).then(()=>{
-  app.listen(PORT, ()=> console.log(`[api] http://localhost:${PORT}`))
-}).catch(err=>{ console.error('[db] error', err); process.exit(1) })
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    app.listen(PORT, () => console.log(`[api] http://localhost:${PORT}`))
+  })
+  .catch((err) => {
+    console.error('[db] error', err)
+    process.exit(1)
+  })

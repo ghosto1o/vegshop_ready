@@ -26,12 +26,22 @@ function AuthModal({ show, setShow, tab, setTab, onSuccess }) {
       style={{ background: 'rgba(0,0,0,.4)', display: 'grid', placeItems: 'center', padding: 16 }}
       onClick={() => setShow(false)}
     >
-      <div className="card" style={{ maxWidth: 420, width: '100%' }} onClick={(e) => e.stopPropagation()}>
+      <div
+        className="card"
+        style={{ maxWidth: 420, width: '100%' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-          <button className={'btn ' + (tab === 'login' ? 'primary' : '')} onClick={() => setTab('login')}>
+          <button
+            className={'btn ' + (tab === 'login' ? 'primary' : '')}
+            onClick={() => setTab('login')}
+          >
             เข้าสู่ระบบ
           </button>
-          <button className={'btn ' + (tab === 'register' ? 'primary' : '')} onClick={() => setTab('register')}>
+          <button
+            className={'btn ' + (tab === 'register' ? 'primary' : '')}
+            onClick={() => setTab('register')}
+          >
             สมัครสมาชิก
           </button>
           <button className="btn" style={{ marginLeft: 'auto' }} onClick={() => setShow(false)}>
@@ -159,4 +169,3 @@ export default function App() {
     </BrowserRouter>
   )
 }
-
