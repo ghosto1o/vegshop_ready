@@ -17,6 +17,14 @@ a{color:inherit}button{cursor:pointer}input,select,button{font:inherit}
   z-index: 2147483647;
 }
 
+.admin-header{background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;border-bottom:none}
+.admin-header-inner{display:flex;gap:8px;align-items:center}
+.admin-nav{display:flex;gap:8px}
+.admin-nav a{padding:6px 12px;border-radius:8px;text-decoration:none;color:#f0fdf4}
+.admin-nav a.active{background:rgba(255,255,255,.25)}
+.admin-actions{margin-left:auto;display:flex;gap:8px}
+.admin-actions .btn{background:#fff;color:#166534;border-color:#fff}
+
 /* เข้าซ้าย-ขวานิด ๆ ดูลื่นตา */
 .cart-drawer {
   animation: cartSlide .18s ease-out;
