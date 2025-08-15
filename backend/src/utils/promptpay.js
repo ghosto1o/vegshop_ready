@@ -1,7 +1,4 @@
-function toTLV(id, value){
-  const len = (''+value).length
-  return id + String(len).padStart(2,'0') + value
-}
+function toTLV(id, value){ const len = (''+value).length; return id + String(len).padStart(2,'0') + value }
 function crc16ccitt(str){
   let crc = 0xFFFF
   for (let i=0;i<str.length;i++){
