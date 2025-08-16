@@ -1,9 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
+<<<<<<< HEAD
 import { listProducts, createProduct, updateProduct, deleteProduct, uploadProductImages } from '../../api/products.js'
+=======
+import { listProducts, createProduct, updateProduct, deleteProduct } from '../../api/products.js'
+>>>>>>> main
 const currency = (n)=> new Intl.NumberFormat('th-TH',{style:'currency', currency:'THB'}).format(n||0)
 
 export default function AdminProducts(){
   const [items, setItems] = useState([])
+<<<<<<< HEAD
   const [draft, setDraft] = useState({ name:'', category:'veg', price:0, originalPrice:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
   const [files, setFiles] = useState([])
   const fileRef = useRef()
@@ -16,6 +21,16 @@ export default function AdminProducts(){
       setDraft(d => ({ ...d, images: merged.map(f => URL.createObjectURL(f)) }))
       return merged
     })
+=======
+  const [draft, setDraft] = useState({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
+  const fileRef = useRef()
+
+  const handleFile = file => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = e => setDraft(d=> ({...d, images:[e.target.result]}))
+    reader.readAsDataURL(file)
+>>>>>>> main
   }
   const load = ()=> listProducts().then(res => setItems((res.items||[]).map(i=> ({...i, id:i._id||i.id}))))
   useEffect(()=>{ load() }, [])
@@ -23,6 +38,7 @@ export default function AdminProducts(){
     <div className="container">
       <h3>สินค้า</h3>
       <div className="card">
+<<<<<<< HEAD
         <div className="add-product-form">
           <p className="upload-info">วางภาพจากคลิปบอร์ด (Ctrl/Cmd+V) หรือ ลากไฟล์มาวาง รองรับ image/* สูงสุด 5 ไฟล์ ≤ 5 MB/ไฟล์</p>
           <div
@@ -80,6 +96,36 @@ export default function AdminProducts(){
               </div>
             </div>
           </div>
+=======
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:8}}>
+          <div
+            style={{
+              border:'2px dashed #ccc',
+              borderRadius:8,
+              width:120,
+              height:120,
+              display:'grid',
+              placeItems:'center',
+              cursor:'pointer'
+            }}
+            onClick={()=>fileRef.current?.click()}
+            onDragOver={e=>e.preventDefault()}
+            onDrop={e=>{e.preventDefault(); handleFile(e.dataTransfer.files?.[0])}}
+          >
+            {draft.images[0]
+              ? <img src={draft.images[0]} alt="preview" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:6}}/>
+              : <span style={{textAlign:'center',fontSize:12,color:'#666'}}>Drop image or click</span>}
+            <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files?.[0])} />
+          </div>
+          <input className="input" placeholder="ชื่อสินค้า" value={draft.name} onChange={e=>setDraft({...draft, name:e.target.value})}/>
+          <select className="input" value={draft.category} onChange={e=>setDraft({...draft, category:e.target.value})}>
+            <option value="veg">ผักสด</option><option value="fruit">ผลไม้</option><option value="herb">พืช/สมุนไพร</option>
+          </select>
+          <input className="input" type="number" placeholder="ราคา" value={draft.price} onChange={e=>setDraft({...draft, price:Number(e.target.value)})}/>
+          <input className="input" placeholder="หน่วย" value={draft.unit} onChange={e=>setDraft({...draft, unit:e.target.value})}/>
+          <input className="input" type="number" placeholder="สต็อก" value={draft.stock} onChange={e=>setDraft({...draft, stock:Number(e.target.value)})}/>
+          <button className="btn primary" disabled={!draft.name} onClick={async ()=>{ await createProduct(draft); setDraft({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 }); load() }}>เพิ่มสินค้า</button>
+>>>>>>> main
         </div>
         <button
           className="btn primary"
@@ -101,11 +147,19 @@ export default function AdminProducts(){
 
       <div className="card" style={{marginTop:12, overflow:'auto'}}>
         <table className="table">
+<<<<<<< HEAD
           <thead><tr><th>รูป</th><th>สินค้า</th><th>หมวด</th><th style={{textAlign:'right'}}>ราคาโปรฯ</th><th style={{textAlign:'right'}}>ราคาปกติ</th><th style={{textAlign:'right'}}>สต็อก</th><th>หน่วย</th><th>ลบ</th></tr></thead>
           <tbody>
             {items.map(p=> (
               <tr key={p.id}>
                   <td>{p.images?.[0] ? <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
+=======
+          <thead><tr><th>รูป</th><th>สินค้า</th><th>หมวด</th><th style={{textAlign:'right'}}>ราคา</th><th style={{textAlign:'right'}}>สต็อก</th><th>หน่วย</th><th>ลบ</th></tr></thead>
+          <tbody>
+            {items.map(p=> (
+              <tr key={p.id}>
+                <td>{p.images?.[0] ? <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
+>>>>>>> main
                 <td>{p.name}</td>
                 <td>{p.category}</td>
                 <td style={{textAlign:'right'}}>{currency(p.price)}</td>
