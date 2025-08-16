@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node src/server.js",
     "dev": "node src/server.js",
     "seed:admin": "node scripts/seedAdmin.js admin@yourshop.com \"StrongPass#2025\"",
     "seed:demo": "node scripts/seedDemo.js"
