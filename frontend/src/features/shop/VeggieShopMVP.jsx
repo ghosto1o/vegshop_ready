@@ -70,6 +70,7 @@ export default function VeggieShopMVP({ onOpenAuth }){
   const [showCart, setShowCart] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [ppOpen, setPpOpen] = useState(false); const [ppPayload, setPpPayload] = useState('')
+  const [viewer, setViewer] = useState({ open:false, images:[], index:0 })
 
   useEffect(()=>{ listProducts().then(r=>{
     const items=(r.items||[]).map(p=> ({...p, id:p._id||p.id}))
@@ -147,6 +148,17 @@ export default function VeggieShopMVP({ onOpenAuth }){
       {/* Grid สินค้า */}
       <div className="container" style={{marginTop:12}}>
         <div className="product-grid">
+<<<<<<< HEAD
+          {s.products.map(p=> {
+            const discount = p.originalPrice && p.price < p.originalPrice ? Math.round(100 - (p.price / p.originalPrice) * 100) : 0
+            return (
+            <div key={p.id} className="card product-card simple">
+              <div className="product-image">
+                {p.images?.length ? (
+                  <img src={p.images[0]} alt={p.name} onClick={()=>setViewer({open:true, images:p.images, index:0})} />
+                ) : '🥬'}
+                {discount > 0 && <span className="discount-badge">-{discount}%</span>}
+=======
           {s.products.map(p=> (
             <div key={p.id} className="card product-card">
               <div className="product-image">{p.images?.[0] ? <img src={p.images[0]} alt={p.name} /> : '🥬'}</div>
@@ -172,13 +184,38 @@ export default function VeggieShopMVP({ onOpenAuth }){
                     {p.stock>0?'ใส่ตะกร้า':'หมดสต็อก'}
                   </button>
                 </div>
+>>>>>>> main
               </div>
-            </div>
-          ))}
+              <div className="product-info">
+                <div className="product-title">{p.name}</div>
+                <div className="price-row">
+                  <b>{currency(p.price)}</b>
+                  {discount>0 && <span className="old-price">{currency(p.originalPrice)}</span>}
+                </div>
+                <button
+                  className="btn add"
+                  disabled={p.stock<=0}
+                  onClick={()=>{ console.log('[Shop] add to cart', p.id); d({type:'ADD_TO_CART', id:p.id}) }}
+                >{p.stock>0?'ใส่ตะกร้า':'หมดสต็อก'}</button>
+              </div>
+            </div>)
+          })}
         </div>
       </div>
 
-      
+      {viewer.open && (
+        <div className="image-modal overlay" onClick={()=>setViewer(v=>({...v, open:false}))}>
+          {viewer.images.length>1 && (
+            <button className="nav prev" onClick={e=>{e.stopPropagation(); setViewer(v=>({...v, index:(v.index-1+v.images.length)%v.images.length}))}}>‹</button>
+          )}
+          <img src={viewer.images[viewer.index]} alt="preview" className="modal-pop" onClick={e=>e.stopPropagation()} />
+          {viewer.images.length>1 && (
+            <button className="nav next" onClick={e=>{e.stopPropagation(); setViewer(v=>({...v, index:(v.index+1)%v.images.length}))}}>›</button>
+          )}
+        </div>
+      )}
+
+
 {/* Drawer: Cart */}
 {showCart && (
   <div
