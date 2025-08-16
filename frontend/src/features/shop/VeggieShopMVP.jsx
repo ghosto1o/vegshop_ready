@@ -70,6 +70,7 @@ export default function VeggieShopMVP({ onOpenAuth }){
   const [showCart, setShowCart] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [ppOpen, setPpOpen] = useState(false); const [ppPayload, setPpPayload] = useState('')
+  const [viewer, setViewer] = useState({ open:false, images:[], index:0 })
 
   useEffect(()=>{ listProducts().then(r=>{
     const items=(r.items||[]).map(p=> ({...p, id:p._id||p.id}))
@@ -149,7 +150,15 @@ export default function VeggieShopMVP({ onOpenAuth }){
         <div className="product-grid">
           {s.products.map(p=> (
             <div key={p.id} className="card product-card">
-              <div className="product-image">{p.images?.[0] ? <img src={p.images[0]} alt={p.name} /> : '🥬'}</div>
+              <div className="product-image">
+                {p.images?.length ? (
+                  <div className="image-scroll">
+                    {p.images.map((img,idx)=>(
+                      <img key={idx} src={img} alt={`${p.name}-${idx}`} onClick={()=>setViewer({open:true, images:p.images, index:idx})} />
+                    ))}
+                  </div>
+                ) : '🥬'}
+              </div>
               <div className="product-info">
                 <div className="product-title-row">
                   <b style={{fontSize:16}}>{p.name}</b>
@@ -178,7 +187,19 @@ export default function VeggieShopMVP({ onOpenAuth }){
         </div>
       </div>
 
-      
+      {viewer.open && (
+        <div className="image-modal overlay" onClick={()=>setViewer(v=>({...v, open:false}))}>
+          {viewer.images.length>1 && (
+            <button className="nav prev" onClick={e=>{e.stopPropagation(); setViewer(v=>({...v, index:(v.index-1+v.images.length)%v.images.length}))}}>‹</button>
+          )}
+          <img src={viewer.images[viewer.index]} alt="preview" className="modal-pop" onClick={e=>e.stopPropagation()} />
+          {viewer.images.length>1 && (
+            <button className="nav next" onClick={e=>{e.stopPropagation(); setViewer(v=>({...v, index:(v.index+1)%v.images.length}))}}>›</button>
+          )}
+        </div>
+      )}
+
+
 {/* Drawer: Cart */}
 {showCart && (
   <div
