@@ -24,6 +24,7 @@ export default function AdminProducts(){
       <h3>สินค้า</h3>
       <div className="card">
         <div className="add-product-form">
+          <p className="upload-info">วางภาพจากคลิปบอร์ด (Ctrl/Cmd+V) หรือ ลากไฟล์มาวาง รองรับ image/* สูงสุด 5 ไฟล์ ≤ 5 MB/ไฟล์</p>
           <div
             className="image-drop"
             onClick={()=>fileRef.current?.click()}

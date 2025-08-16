@@ -124,6 +124,12 @@ a{color:inherit}button{cursor:pointer}input,select,button{font:inherit}
   align-items:flex-start;
   flex-wrap:wrap;
 }
+.add-product-form .upload-info{
+  width:100%;
+  font-size:12px;
+  color:#666;
+  margin:0 0 8px;
+}
 .add-product-form .image-drop{
   border:2px dashed #ccc;
   border-radius:8px;
