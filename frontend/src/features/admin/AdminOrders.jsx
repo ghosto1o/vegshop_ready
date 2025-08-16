@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { adminListOrders, adminUpdateOrderStatus } from '../../api/adminOrders.js'
 const currency = (n)=> new Intl.NumberFormat('th-TH',{style:'currency', currency:'THB'}).format(n||0)
 const STATUS_OPTIONS = ['รอการชำระเงิน','กำลังดำเนินการ','กำลังจัดส่ง','จัดส่งแล้ว','ยกเลิก']
+const STATUS_CLASS = {
+  'รอการชำระเงิน': 'pending',
+  'กำลังดำเนินการ': 'processing',
+  'กำลังจัดส่ง': 'shipping',
+  'จัดส่งแล้ว': 'done',
+  'ยกเลิก': 'cancel',
+}
 const renderPayMethod = (m)=> {
   if (m === 'cod') return 'ชำระปลายทาง (COD)'
   if (m === 'transfer') return 'โอนผ่านธนาคาร'
@@ -18,7 +25,7 @@ export default function AdminOrders(){
     <div className="container">
       <h3>คำสั่งซื้อทั้งหมด</h3>
       <div className="card" style={{overflow:'auto'}}>
-        <table className="table">
+        <table className="table orders-table">
           <thead>
             <tr>
               <th>#</th>
@@ -41,7 +48,7 @@ export default function AdminOrders(){
                   <div>{renderPayMethod(o.paymentMethod)}</div>
                   {o.chargeId && <div style={{fontSize:12,color:'#555'}}>Charge: {o.chargeId}</div>}
                 </td>
-                <td>{o.status}</td>
+                <td><span className={`status-badge ${STATUS_CLASS[o.status]||''}`}>{o.status}</span></td>
                 <td>
                   <select
                     className="input"
