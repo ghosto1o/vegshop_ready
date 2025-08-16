@@ -149,7 +149,7 @@ export default function VeggieShopMVP({ onOpenAuth }){
         <div className="product-grid">
           {s.products.map(p=> (
             <div key={p.id} className="card product-card">
-              <div className="product-image">{p.images?.[0]||'🥬'}</div>
+              <div className="product-image">{p.images?.[0] ? <img src={p.images[0]} alt={p.name} /> : '🥬'}</div>
               <div className="product-info">
                 <div className="product-title-row">
                   <b style={{fontSize:16}}>{p.name}</b>
@@ -244,10 +244,10 @@ export default function VeggieShopMVP({ onOpenAuth }){
               <div
                 style={{
                   fontSize: 28, background: '#f0fdf4', width: 44, height: 44,
-                  borderRadius: 10, display: 'grid', placeItems: 'center'
+                  borderRadius: 10, display: 'grid', placeItems: 'center', overflow:'hidden'
                 }}
               >
-                {ci.product.images?.[0] || '🥬'}
+                {ci.product.images?.[0] ? <img src={ci.product.images[0]} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/> : '🥬'}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700 }}>{ci.product.name}</div>

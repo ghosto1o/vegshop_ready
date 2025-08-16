@@ -16,11 +16,18 @@ async function refresh(){
 
 export async function api(path, { method='GET', body } = {}){
   const doFetch = async ()=>{
-    const headers = { 'Content-Type':'application/json' }
+    const headers = {}
+    const isForm = body instanceof FormData
+    if (!isForm) headers['Content-Type'] = 'application/json'
     if (ACCESS_TOKEN) headers['Authorization'] = 'Bearer ' + ACCESS_TOKEN
     const legacy = localStorage.getItem('veg_token')
     if (!ACCESS_TOKEN && legacy) headers['Authorization'] = 'Bearer ' + legacy
-    const res = await fetch(BASE + path, { method, headers, body: body? JSON.stringify(body): undefined, credentials:'include' })
+    const res = await fetch(BASE + path, {
+      method,
+      headers,
+      body: body ? (isForm ? body : JSON.stringify(body)) : undefined,
+      credentials:'include'
+    })
     return res
   }
   let res = await doFetch()
