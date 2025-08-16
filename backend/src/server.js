@@ -15,6 +15,8 @@ import adminOrders from './routes/admin.orders.js'
 import account from './routes/account.js'
 import authMw from './middleware/auth.js'
 import payments from './routes/payments.js'
+import path from 'path'
+
 
 const app = express()
 app.use(helmet({ crossOriginResourcePolicy:{ policy:'cross-origin' } }))
@@ -40,3 +42,10 @@ const PORT = process.env.PORT || 4000
 mongoose.connect(process.env.MONGO_URI).then(()=>{
   app.listen(PORT, ()=> console.log(`[api] http://localhost:${PORT}`))
 }).catch(err=>{ console.error('[db] error', err); process.exit(1) })
+
+// backend/src/server.js
+const __dirname = import.meta.dirname
+app.use(express.static(path.join(__dirname, '../../frontend/dist')))
+app.get('*', (_req, res) =>
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'))
+)

@@ -1,9 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
+<<<<<<< HEAD
 import { listProducts, createProduct, updateProduct, deleteProduct, uploadProductImages } from '../../api/products.js'
-const currency = n => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(n || 0)
+=======
+import { listProducts, createProduct, updateProduct, deleteProduct } from '../../api/products.js'
+>>>>>>> main
+const currency = (n)=> new Intl.NumberFormat('th-TH',{style:'currency', currency:'THB'}).format(n||0)
 
 export default function AdminProducts(){
   const [items, setItems] = useState([])
+<<<<<<< HEAD
   const [draft, setDraft] = useState({ name:'', category:'veg', price:0, originalPrice:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
   const [files, setFiles] = useState([])
   const fileRef = useRef()
@@ -12,24 +17,20 @@ export default function AdminProducts(){
     const arr = Array.from(list || []).filter(f => f.type.startsWith('image/') && f.size <= 5 * 1024 * 1024)
     if (!arr.length) return
     setFiles(prev => {
-      const merged = [...prev, ...arr].slice(0, 5)
-      setDraft(d => {
-        d.images.forEach(u => URL.revokeObjectURL(u))
-        return { ...d, images: merged.map(f => URL.createObjectURL(f)) }
-      })
+      const merged = [...prev, ...arr].slice(0,5)
+      setDraft(d => ({ ...d, images: merged.map(f => URL.createObjectURL(f)) }))
       return merged
     })
-  }
+=======
+  const [draft, setDraft] = useState({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
+  const fileRef = useRef()
 
-  const removeFile = idx => {
-    setFiles(prev => {
-      const next = prev.filter((_, i) => i !== idx)
-      setDraft(d => {
-        URL.revokeObjectURL(d.images[idx])
-        return { ...d, images: d.images.filter((_, i) => i !== idx) }
-      })
-      return next
-    })
+  const handleFile = file => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = e => setDraft(d=> ({...d, images:[e.target.result]}))
+    reader.readAsDataURL(file)
+>>>>>>> main
   }
   const load = ()=> listProducts().then(res => setItems((res.items||[]).map(i=> ({...i, id:i._id||i.id}))))
   useEffect(()=>{ load() }, [])
@@ -37,6 +38,7 @@ export default function AdminProducts(){
     <div className="container">
       <h3>สินค้า</h3>
       <div className="card">
+<<<<<<< HEAD
         <div className="add-product-form">
           <p className="upload-info">วางภาพจากคลิปบอร์ด (Ctrl/Cmd+V) หรือ ลากไฟล์มาวาง รองรับ image/* สูงสุด 5 ไฟล์ ≤ 5 MB/ไฟล์</p>
           <div
@@ -46,13 +48,8 @@ export default function AdminProducts(){
             onDrop={e=>{e.preventDefault(); handleFiles(e.dataTransfer.files)}}
             onPaste={e=>handleFiles(e.clipboardData.files)}
           >
-            {draft.images[0]
-              ? (
-                <>
-                  <img src={draft.images[0]} alt="preview" />
-                  <button type="button" className="remove" onClick={() => removeFile(0)}>×</button>
-                </>
-              )
+            {draft.images.length
+              ? <img src={draft.images[0]} alt="preview"/>
               : <span>รูปภาพสินค้า</span>}
             <input
               ref={fileRef}
@@ -63,17 +60,6 @@ export default function AdminProducts(){
               onChange={e=>handleFiles(e.target.files)}
             />
           </div>
-          {draft.images.length > 1 && (
-            <div className="thumbs">
-              {draft.images.slice(1).map((url, i) => (
-                <div key={i} className="thumb">
-                  <img src={url} alt={`preview-${i + 1}`} />
-                  <button type="button" className="remove" onClick={() => removeFile(i + 1)}>×</button>
-                </div>
-              ))}
-            </div>
-          )}
-
           <div className="fields">
             <div className="row">
               <div className="field">
@@ -110,6 +96,36 @@ export default function AdminProducts(){
               </div>
             </div>
           </div>
+=======
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:8}}>
+          <div
+            style={{
+              border:'2px dashed #ccc',
+              borderRadius:8,
+              width:120,
+              height:120,
+              display:'grid',
+              placeItems:'center',
+              cursor:'pointer'
+            }}
+            onClick={()=>fileRef.current?.click()}
+            onDragOver={e=>e.preventDefault()}
+            onDrop={e=>{e.preventDefault(); handleFile(e.dataTransfer.files?.[0])}}
+          >
+            {draft.images[0]
+              ? <img src={draft.images[0]} alt="preview" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:6}}/>
+              : <span style={{textAlign:'center',fontSize:12,color:'#666'}}>Drop image or click</span>}
+            <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files?.[0])} />
+          </div>
+          <input className="input" placeholder="ชื่อสินค้า" value={draft.name} onChange={e=>setDraft({...draft, name:e.target.value})}/>
+          <select className="input" value={draft.category} onChange={e=>setDraft({...draft, category:e.target.value})}>
+            <option value="veg">ผักสด</option><option value="fruit">ผลไม้</option><option value="herb">พืช/สมุนไพร</option>
+          </select>
+          <input className="input" type="number" placeholder="ราคา" value={draft.price} onChange={e=>setDraft({...draft, price:Number(e.target.value)})}/>
+          <input className="input" placeholder="หน่วย" value={draft.unit} onChange={e=>setDraft({...draft, unit:e.target.value})}/>
+          <input className="input" type="number" placeholder="สต็อก" value={draft.stock} onChange={e=>setDraft({...draft, stock:Number(e.target.value)})}/>
+          <button className="btn primary" disabled={!draft.name} onClick={async ()=>{ await createProduct(draft); setDraft({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 }); load() }}>เพิ่มสินค้า</button>
+>>>>>>> main
         </div>
         <button
           className="btn primary"
@@ -122,7 +138,6 @@ export default function AdminProducts(){
               images = uploaded.urls
             }
             await createProduct({ ...draft, images })
-            draft.images.forEach(u => URL.revokeObjectURL(u))
             setDraft({ name:'', category:'veg', price:0, originalPrice:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
             setFiles([])
             load()
@@ -131,44 +146,27 @@ export default function AdminProducts(){
       </div>
 
       <div className="card" style={{marginTop:12, overflow:'auto'}}>
-        <table className="table products-table">
-          <thead>
-            <tr>
-              <th>รูป</th>
-              <th>สินค้า</th>
-              <th>หมวด</th>
-              <th style={{textAlign:'right'}}>ราคาโปรฯ</th>
-              <th style={{textAlign:'right'}}>ราคาปกติ</th>
-              <th style={{textAlign:'right'}}>สต็อก</th>
-              <th>หน่วย</th>
-              <th>ลบ</th>
-            </tr>
-          </thead>
+        <table className="table">
+<<<<<<< HEAD
+          <thead><tr><th>รูป</th><th>สินค้า</th><th>หมวด</th><th style={{textAlign:'right'}}>ราคาโปรฯ</th><th style={{textAlign:'right'}}>ราคาปกติ</th><th style={{textAlign:'right'}}>สต็อก</th><th>หน่วย</th><th>ลบ</th></tr></thead>
           <tbody>
-            {items.map(p => (
+            {items.map(p=> (
               <tr key={p.id}>
-                <td>
-                  {p.images?.[0] ? (
-                    <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/>
-                  ) : '—'}
-                </td>
+                  <td>{p.images?.[0] ? <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
+=======
+          <thead><tr><th>รูป</th><th>สินค้า</th><th>หมวด</th><th style={{textAlign:'right'}}>ราคา</th><th style={{textAlign:'right'}}>สต็อก</th><th>หน่วย</th><th>ลบ</th></tr></thead>
+          <tbody>
+            {items.map(p=> (
+              <tr key={p.id}>
+                <td>{p.images?.[0] ? <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
+>>>>>>> main
                 <td>{p.name}</td>
                 <td>{p.category}</td>
                 <td style={{textAlign:'right'}}>{currency(p.price)}</td>
-                <td style={{textAlign:'right'}}>{p.originalPrice ? currency(p.originalPrice) : '—'}</td>
-                <td style={{textAlign:'right'}}>
-                  <input
-                    className="input"
-                    style={{width:80,textAlign:'right'}}
-                    type="number"
-                    defaultValue={p.stock}
-                    onBlur={async e => { await updateProduct(p.id, { stock: Number(e.target.value) }); load() }}
-                  />
-                </td>
+                <td style={{textAlign:'right'}}>{p.originalPrice?currency(p.originalPrice):'—'}</td>
+                <td style={{textAlign:'right'}}><input className="input" style={{width:80,textAlign:'right'}} type="number" defaultValue={p.stock} onBlur={async (e)=>{ await updateProduct(p.id, { stock:Number(e.target.value) }); load() }} /></td>
                 <td>{p.unit}</td>
-                <td>
-                  <button className="btn" onClick={async () => { if (confirm(`ลบสินค้า “${p.name}” ?`)) { await deleteProduct(p.id); load() } }}>ลบ</button>
-                </td>
+                <td><button className="btn" onClick={async ()=>{ if(confirm(`ลบสินค้า “${p.name}” ?`)){ await deleteProduct(p.id); load() } }}>ลบ</button></td>
               </tr>
             ))}
           </tbody>
