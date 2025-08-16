@@ -4,14 +4,14 @@ const currency = (n)=> new Intl.NumberFormat('th-TH',{style:'currency', currency
 
 export default function AdminProducts(){
   const [items, setItems] = useState([])
-  const [draft, setDraft] = useState({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
+  const [draft, setDraft] = useState({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', image:'', rating:4.5 })
   const [file, setFile] = useState(null)
   const fileRef = useRef()
 
   const handleFile = f => {
     if (!f) return
     setFile(f)
-    setDraft(d=> ({...d, images:[URL.createObjectURL(f)]}))
+    setDraft(d=> ({...d, image: URL.createObjectURL(f)}))
   }
   const load = ()=> listProducts().then(res => setItems((res.items||[]).map(i=> ({...i, id:i._id||i.id}))))
   useEffect(()=>{ load() }, [])
@@ -34,8 +34,8 @@ export default function AdminProducts(){
             onDragOver={e=>e.preventDefault()}
             onDrop={e=>{e.preventDefault(); handleFile(e.dataTransfer.files?.[0])}}
           >
-            {draft.images[0]
-              ? <img src={draft.images[0]} alt="preview" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:6}}/>
+            {draft.image
+              ? <img src={draft.image} alt="preview" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:6}}/>
               : <span style={{textAlign:'center',fontSize:12,color:'#666'}}>Drop image or click</span>}
             <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files?.[0])} />
           </div>
@@ -47,13 +47,13 @@ export default function AdminProducts(){
           <input className="input" placeholder="หน่วย" value={draft.unit} onChange={e=>setDraft({...draft, unit:e.target.value})}/>
           <input className="input" type="number" placeholder="สต็อก" value={draft.stock} onChange={e=>setDraft({...draft, stock:Number(e.target.value)})}/>
           <button className="btn primary" disabled={!draft.name} onClick={async ()=>{
-            let images = []
+            let image = ''
             if (file){
               const uploaded = await uploadProductImage(file)
-              images = [uploaded.url]
+              image = uploaded.url
             }
-            await createProduct({ ...draft, images })
-            setDraft({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', images:[], rating:4.5 })
+            await createProduct({ ...draft, image })
+            setDraft({ name:'', category:'veg', price:0, unit:'กก.', stock:0, description:'', image:'', rating:4.5 })
             setFile(null)
             load()
           }}>เพิ่มสินค้า</button>
@@ -66,7 +66,7 @@ export default function AdminProducts(){
           <tbody>
             {items.map(p=> (
               <tr key={p.id}>
-                <td>{p.images?.[0] ? <img src={p.images[0]} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
+                <td>{p.image ? <img src={p.image} alt={p.name} style={{width:40,height:40,objectFit:'cover',borderRadius:4}}/> : '—'}</td>
                 <td>{p.name}</td>
                 <td>{p.category}</td>
                 <td style={{textAlign:'right'}}>{currency(p.price)}</td>

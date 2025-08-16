@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
   unit:{type:String,default:'กก.'},
   price:{type:Number,default:0},
   stock:{type:Number,default:0},
-  images:[String],
+  image:String,
   rating:Number
 },{timestamps:true})
 export default mongoose.model('Product', schema)
